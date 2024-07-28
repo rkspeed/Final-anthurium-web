@@ -12,7 +12,7 @@ CORS(app)
 model = tf.keras.models.load_model('anthurium_model.h5')
 
 # Class names
-class_names = ['healthy', 'disease1', 'disease2']  # Update with actual class names
+class_names = ['healthy', 'bacterialBlight', 'rootRot',"rust",'anthuriumMosaicVirus']  # Update with actual class names
 
 @app.route('/predict', methods=['POST'])
 def predict():

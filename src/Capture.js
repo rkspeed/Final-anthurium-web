@@ -4,10 +4,11 @@ import { FaCamera, FaFileImage } from 'react-icons/fa';
 import axios from 'axios';
 import './Capture.css';
 import './DiseaseSolution.css'
+import solutions from "./solution"
 
 const Capture = () => {
   const [selectedImage, setSelectedImage] = useState(null);
-  const [diagnosis, setDiagnosis] = useState('');
+  const [diagnosisId, setDiagnosisId] = useState(0);
   const [file, setFile] = useState(null);
   const [result, setResult] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -19,7 +20,7 @@ const Capture = () => {
       const imageFile = event.target.files[0];
       const imageUrl = URL.createObjectURL(imageFile);
       setSelectedImage(imageUrl);
-      setDiagnosis('');
+
     }
   };
 
@@ -38,7 +39,24 @@ const Capture = () => {
       });
       console.log(response, "responseee")
       setShowModal(true);
+
+      const name = response.data.predicted_class;
       setResult(response.data.predicted_class);
+      if (name == "bacterialBlight") {
+        setDiagnosisId(1)
+        // , 'bacterialBlight', 'rootRot',"rust",'anthuriumMosaicVirus'
+      } else if (name == "rootRot") {
+        setDiagnosisId(2)
+
+      } else if (name == "rust") {
+        setDiagnosisId(3)
+
+      } else if (name == "anthuriumMosaicVirus") {
+        setDiagnosisId(4)
+
+      } else {
+        setResult("Healthy");
+      }
     } catch (error) {
       console.error('There was an error uploading the file!', error);
     }
@@ -90,6 +108,13 @@ const Capture = () => {
 
                 </div>
               )}
+            </div>
+            <div>
+              {solutions?.map((det) => (
+                det.id == diagnosisId && det?.details?.map((d) => (
+                  <p>{d}</p>
+                ))
+              ))}
             </div>
           </div>
 
