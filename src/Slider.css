@@ -1,0 +1,11 @@
+/* src/Slider.css */
+.slick-slide img {
+    width: 100%;
+    height: auto;
+  }
+  
+  .slick-slide h3 {
+    text-align: center;
+    margin-top: 10px;
+  }
+  

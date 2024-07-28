@@ -1,0 +1,28 @@
+/* src/Home.css */
+.header {
+  background-color: #f8f9fa;
+  padding: 10px 0;
+}
+
+.icon-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+
+.icon-nav a {
+  text-decoration: none;
+  color: #000;
+  text-align: center;
+}
+
+.icon-nav .icon {
+  font-size: 24px;
+  color: green;
+}
+
+.icon-nav span {
+  display: block;
+  font-size: 14px;
+  margin-top: 5px;
+}
