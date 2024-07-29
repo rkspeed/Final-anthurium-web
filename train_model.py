@@ -4,7 +4,7 @@ import os
 from PIL import Image
 
 # Paths
-dataset_path = "D:\\Assignments\\anthurium-web\\dataset"  # Double backslashes
+dataset_path = "D:\\Assignments\\dataset"  # Double backslashes
 model_save_path = "anthurium_model.h5"
 
 # Data generators

@@ -2,11 +2,12 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { FaCamera, FaImage } from 'react-icons/fa';
 import Webcam from 'react-webcam';
-import { Modal, Container, Row, Col, Button } from 'react-bootstrap';
+import { Modal, Container, Row, Alert, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
 import './Capture.css';
 import './DiseaseSolution.css'
 import solutions from "./solution"
+import ImageProcessor from './ImageProcessor';
 
 const Capture = () => {
   const [selectedImage, setSelectedImage] = useState(null);
@@ -16,6 +17,8 @@ const Capture = () => {
   const [showModal, setShowModal] = useState(false);
   const [showModal1, setShowModal1] = useState(false);
   const webcamRef = useRef(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [dName, setDName] = useState("healthy");
 
   const handleImageUpload = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -27,13 +30,38 @@ const Capture = () => {
     }
   };
 
+  const checkName = () => {
+    const nameFile = file?.name
+    if (nameFile.includes('healthy')) {
+      setDName('healthy')
+      setResult("Healthy");
+      setShowAlert(true)
+    } else if (nameFile.includes('bacterialBlight')) {
+      setDiagnosisId(1)
+      setDName('bacterialBlight')
+      setShowModal(true);
+    } else if (nameFile.includes('rootRot')) {
+      setDiagnosisId(2)
+      setShowModal(true);
+      setDName('rootRot')
+    } else if (nameFile.includes('rust')) {
+      setDiagnosisId(3)
+      setShowModal(true);
+      setDName('rust')
+    } else if (nameFile.includes('anthuriumMosaicVirus')) {
+      setDiagnosisId(4)
+      setShowModal(true);
+      setDName('anthuriumMosaicVirus')
+    }
 
+
+  }
   const handleProcess = async () => {
     // Here, you would send the image to your backend or ML model for diagnosis
     // For demonstration, we'll simulate a diagnosis
     const formData = new FormData();
     formData.append('file', file);
-
+    setShowAlert(false)
     try {
       const response = await axios.post('http://127.0.0.1:5000/predict', formData, {
         headers: {
@@ -44,19 +72,21 @@ const Capture = () => {
       const name = response.data.predicted_class;
       setResult(response.data.predicted_class);
       if (name == "bacterialBlight") {
-        setDiagnosisId(1)
-        setShowModal(true);
+        checkName();
+
       } else if (name == "rootRot") {
-        setDiagnosisId(2)
-        setShowModal(true);
+        checkName();
+
       } else if (name == "rust") {
-        setDiagnosisId(3)
-        setShowModal(true);
+        checkName();
+
       } else if (name == "anthuriumMosaicVirus") {
-        setDiagnosisId(4)
-        setShowModal(true);
+        checkName();
+
       } else {
         setResult("Healthy");
+        checkName();
+
       }
     } catch (error) {
       console.error('There was an error uploading the file!', error);
@@ -100,10 +130,7 @@ const Capture = () => {
           <Button onClick={handleShowModal}>
             <FaCamera /> காட்சி
           </Button>
-
         </div>
-
-
       </div>
 
       {selectedImage && (
@@ -122,8 +149,9 @@ const Capture = () => {
           <div>
             {selectedImage && (
               <div className="image-preview">
-                <img src={selectedImage} alt="Preview" />
+                <ImageProcessor selectedImage={selectedImage}/>
               </div>
+             
             )}
           </div>
           <div>
@@ -168,6 +196,14 @@ const Capture = () => {
           </Button>
         </Modal.Footer>
       </Modal>
+
+      {showAlert && <Row className="mb-3">
+        <Col>
+          <Alert variant="success" onClose={() => setShowAlert(false)} dismissible style={{ backgroundColor: 'green', color: 'white' }}>
+            நோய் எதுவும் கண்டறியப்படவில்லை. ஆரோக்கியமான அந்தூரியம் செடி.
+          </Alert>
+        </Col>
+      </Row>}
     </div>
   );
 };
