@@ -1,6 +1,7 @@
 // src/Home.js
 import React, { useState } from 'react';
 import { FaCamera, FaFileImage } from 'react-icons/fa';
+import { Modal } from 'react-bootstrap';
 import axios from 'axios';
 import './Capture.css';
 import './DiseaseSolution.css'
@@ -69,7 +70,7 @@ const Capture = () => {
 
   return (
     <div className="home">
-      <header className="header">
+      <header className="header-hd">
         <h1>தேடல் பக்கம்</h1>
       </header>
       <div className="content">
@@ -92,34 +93,49 @@ const Capture = () => {
             <button className="process-button" onClick={handleProcess}>Process</button>
           </div>
         )}
-        {result && <p className="diagnosis-result">{result}</p>}
+
       </div>
 
-      {showModal && (
-        <div className="modal">
-          <div className="modal-content">
-            <span className="close-button" onClick={closeModal}>&times;</span>
-            <h2>நோய் தீர்வு</h2>
-            <p>நோய்க்கான தீர்வு இதோ.!</p>
-            <div>
-              {selectedImage && (
-                <div className="image-preview">
-                  <img src={selectedImage} alt="Preview" />
+      {/* {showModal && (
+        // <div className="modal">
+        //   <div className="modal-content" style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
+        //     <span className="close-button" onClick={closeModal}>&times;</span>
+        //     {result && <p className="diagnosis-result">{result}</p>}
+        //     <h2>நோய் தீர்வு</h2>
+        //     <p>நோய்க்கான தீர்வு இதோ.!</p>
+        //     <div>
+        //       {selectedImage && (
+        //         <div className="image-preview">
+        //           <img src={selectedImage} alt="Preview" />
+        //         </div>
+        //       )}
+        //     </div>
+        //     <div>
+        //       {solutions?.map((det) => (
+        //         <>
+        //           <h4>{det.disease}</h4>
+        //           <p>{det.title}</p>
 
-                </div>
-              )}
-            </div>
-            <div>
-              {solutions?.map((det) => (
-                det.id == diagnosisId && det?.details?.map((d) => (
-                  <p>{d}</p>
-                ))
-              ))}
-            </div>
-          </div>
+        //           {det.id == diagnosisId && det?.details?.map((d) => (
+        //             <p>{d.topic}</p>
 
-        </div>
-      )}
+        //           ))}
+        //         </>
+        //       ))}
+        //     </div>
+        //   </div>
+
+        // </div>
+       
+
+      )} */}
+       <Modal show={showModal} onHide={closeModal} centered>
+          <Modal.Header closeButton>
+            <Modal.Title>அன்தூரியம் மோசைக் வைரஸ் நோய்கள்: தீர்வு மற்றும் தடுப்பு முறைகள் (தமிழில்)</Modal.Title>
+          </Modal.Header>
+          <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
+          </Modal.Body>
+        </Modal>
     </div>
   );
 };
