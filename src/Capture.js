@@ -1,7 +1,8 @@
 // src/Home.js
-import React, { useState } from 'react';
-import { FaCamera, FaFileImage } from 'react-icons/fa';
-import { Modal } from 'react-bootstrap';
+import React, { useState, useRef, useCallback } from 'react';
+import { FaCamera, FaImage } from 'react-icons/fa';
+import Webcam from 'react-webcam';
+import { Modal, Container, Row, Col, Button } from 'react-bootstrap';
 import axios from 'axios';
 import './Capture.css';
 import './DiseaseSolution.css'
@@ -13,7 +14,8 @@ const Capture = () => {
   const [file, setFile] = useState(null);
   const [result, setResult] = useState('');
   const [showModal, setShowModal] = useState(false);
-
+  const [showModal1, setShowModal1] = useState(false);
+  const webcamRef = useRef(null);
 
   const handleImageUpload = (event) => {
     if (event.target.files && event.target.files[0]) {
@@ -38,23 +40,21 @@ const Capture = () => {
           'Content-Type': 'multipart/form-data',
         },
       });
-      console.log(response, "responseee")
-      setShowModal(true);
 
       const name = response.data.predicted_class;
       setResult(response.data.predicted_class);
       if (name == "bacterialBlight") {
         setDiagnosisId(1)
-        // , 'bacterialBlight', 'rootRot',"rust",'anthuriumMosaicVirus'
+        setShowModal(true);
       } else if (name == "rootRot") {
         setDiagnosisId(2)
-
+        setShowModal(true);
       } else if (name == "rust") {
         setDiagnosisId(3)
-
+        setShowModal(true);
       } else if (name == "anthuriumMosaicVirus") {
         setDiagnosisId(4)
-
+        setShowModal(true);
       } else {
         setResult("Healthy");
       }
@@ -68,12 +68,21 @@ const Capture = () => {
     setShowModal(false);
   };
 
+  const capture = useCallback(() => {
+    const imageSrc = webcamRef.current.getScreenshot();
+    setSelectedImage(imageSrc);
+    handleCloseModal();
+  }, [webcamRef]);
+
+  const handleShowModal = () => setShowModal1(true);
+  const handleCloseModal = () => setShowModal1(false);
+
   return (
     <div className="home">
       <header className="header-hd">
         <h1>தேடல் பக்கம்</h1>
       </header>
-      <div className="content">
+      <div className="content capture-div">
         <div className="button-container">
           <label htmlFor="capture" className="button">
             <FaCamera /> பிடிப்பு
@@ -87,55 +96,78 @@ const Capture = () => {
           />
 
         </div>
-        {selectedImage && (
-          <div className="image-preview">
-            <img src={selectedImage} alt="Preview" />
-            <button className="process-button" onClick={handleProcess}>Process</button>
-          </div>
-        )}
+        <div className="button-container">
+          <Button onClick={handleShowModal}>
+            <FaCamera /> காட்சி
+          </Button>
+
+        </div>
+
 
       </div>
 
-      {/* {showModal && (
-        // <div className="modal">
-        //   <div className="modal-content" style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-        //     <span className="close-button" onClick={closeModal}>&times;</span>
-        //     {result && <p className="diagnosis-result">{result}</p>}
-        //     <h2>நோய் தீர்வு</h2>
-        //     <p>நோய்க்கான தீர்வு இதோ.!</p>
-        //     <div>
-        //       {selectedImage && (
-        //         <div className="image-preview">
-        //           <img src={selectedImage} alt="Preview" />
-        //         </div>
-        //       )}
-        //     </div>
-        //     <div>
-        //       {solutions?.map((det) => (
-        //         <>
-        //           <h4>{det.disease}</h4>
-        //           <p>{det.title}</p>
+      {selectedImage && (
+        <div className="image-preview">
+          <img src={selectedImage} alt="Preview" />
+          <button className="process-button" onClick={handleProcess}>செயல்முறை</button>
+        </div>
+      )}
+      <Modal show={showModal} centered>
+        <Modal.Header >
 
-        //           {det.id == diagnosisId && det?.details?.map((d) => (
-        //             <p>{d.topic}</p>
+          <Modal.Title>நோய் தீர்வு</Modal.Title>
+          <span className="close-button" onClick={closeModal}>&times;</span>
+        </Modal.Header>
+        <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
+          <div>
+            {selectedImage && (
+              <div className="image-preview">
+                <img src={selectedImage} alt="Preview" />
+              </div>
+            )}
+          </div>
+          <div>
+            {solutions?.map((det) => (
+              det.id === diagnosisId && <>
+                <h4>{det.disease}</h4>
+                <p className='det-title'>{det.title}</p>
 
-        //           ))}
-        //         </>
-        //       ))}
-        //     </div>
-        //   </div>
-
-        // </div>
-       
-
-      )} */}
-       <Modal show={showModal} onHide={closeModal} centered>
-          <Modal.Header closeButton>
-            <Modal.Title>அன்தூரியம் மோசைக் வைரஸ் நோய்கள்: தீர்வு மற்றும் தடுப்பு முறைகள் (தமிழில்)</Modal.Title>
-          </Modal.Header>
-          <Modal.Body style={{ maxHeight: 'calc(100vh - 210px)', overflowY: 'auto' }}>
-          </Modal.Body>
-        </Modal>
+                {det.id == diagnosisId && det?.details?.map((d) => (
+                  <>
+                    <p className='det-title '><strong>{d.topic}</strong></p>
+                    <ul style={{ paddingLeft: '20px', listStyleType: 'disc' }}> {d.solutions.map((s) => (
+                      <li className='det-li'>
+                        {s}
+                      </li>
+                    ))} </ul>
+                  </>
+                ))}
+              </>
+            ))}
+          </div>
+        </Modal.Body>
+      </Modal>
+      <Modal show={showModal1} onHide={handleCloseModal} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>கேமரா</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Webcam
+            audio={false}
+            ref={webcamRef}
+            screenshotFormat="image/jpeg"
+            width="100%"
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleCloseModal}>
+            மூடு
+          </Button>
+          <Button variant="primary" onClick={capture}>
+            புகைப்படம் எடு
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </div>
   );
 };

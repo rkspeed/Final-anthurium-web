@@ -61,9 +61,34 @@ body {
   
   .close-button {
     position: absolute;
-    top: 10px;
-    right: 10px;
+    top:30px;
+    right:30px;
     font-size: 24px;
     cursor: pointer;
   }
-  
+
+  .det-title{
+    display: flex;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: start;
+  }
+  .det-li{
+    text-align: start;
+  }
+
+  .gallery-img{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    .card{
+      width: 80%;
+    }
+  }
+
+  .capture-div{
+    display: flex;
+    justify-content: space-between;
+    margin-left: 20px;
+    margin-right: 20px;
+  }
